@@ -10,6 +10,6 @@ namespace TaskManager.Models
         }
 
         public DbSet<Employee> Employees { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<EmployeeTask> Tasks { get; set; }
     }
 }

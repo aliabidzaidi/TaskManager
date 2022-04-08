@@ -1,6 +1,6 @@
 ﻿namespace TaskManager.Models
 {
-    public class Task
+    public class EmployeeTask
     {
         public int Id { get; set; }
         public String Title { get; set; }
