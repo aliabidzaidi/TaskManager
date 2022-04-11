@@ -1,4 +1,4 @@
-<nz-card nzTitle="Card title" [nzExtra]="extraTemplate">
+<nz-card nzTitle="Employee Tasks" [nzExtra]="extraTemplate">
 
   <nz-table #basicTable [nzData]="taskList">
     <thead>
@@ -25,42 +25,54 @@
 
 <ng-template #extraTemplate>
   <button nz-button [nzType]="'primary'" (click)="showModal()"><span>Show Modal</span></button>
-    
-  
 </ng-template>
 
 
-<nz-modal [(nzVisible)]="isAddTask" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+<nz-modal [(nzVisible)]="isAddTask" nzTitle="Add Task" [nzFooter]="modalFooter">
   <ng-container *nzModalContent>
-    <p>Content one</p>
-    <p>Content two</p>
-    <p>Content three</p>
+    <!-- Input form -->
+    <!-- Drop down selecting Employee -->
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+      
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzFor="employeeId" nzRequired>Employee Name</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzErrorTip="Please select Employee">
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select an Employee" formControlName="employeeId">
+            <nz-option *ngFor="let e of employeeList" nzLabel="{{e.name}}" nzValue="{{e.id}}"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7">Task Title</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzErrorTip="Please write something here!">
+          <!-- <textarea formControlName="title" nz-input rows="2" placeholder="write any thing"></textarea> -->
+          <input id="title" type="text" nz-input formControlName="title" />
+        </nz-form-control>
+      </nz-form-item>
+
+
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7">Date Assigned</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzErrorTip="Please select date">
+          <nz-date-picker nzShowTime formControlName="datePickerTime"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      
+
+    </form>
+
   </ng-container>
+
+  
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">Custom Callback</button>
+    <button nz-button nzType="primary" (click)="submitForm()" [nzLoading]="isConfirmLoading">Custom Submit</button>
+  </ng-template>
+
 </nz-modal>
 
-
-
-<!-- 
-
-
-<nz-table #basicTable [nzData]="listOfData">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Age</th>
-      <th>Address</th>
-      <th>Action</th>
-    </tr> 
-  </thead>
-  <tbody>
-    <tr *ngFor="let data of basicTable.data">
-      <td>{{ data.name }}</td>
-      <td>{{ data.age }}</td>
-      <td>{{ data.address }}</td>
-      <td>
-        <a>Edit</a>
-        <a>Delete</a>
-      </td>
-    </tr>
-  </tbody>
-</nz-table> -->

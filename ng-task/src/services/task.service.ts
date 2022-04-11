@@ -30,7 +30,7 @@ export class TaskService {
 
   public addTask(task: any): Observable<any> {
     const url = CoreConfig.getPath() + `/task`;
-
+    console.log(task);
     return this.http.post(url, task);
   }
 

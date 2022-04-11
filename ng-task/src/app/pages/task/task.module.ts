@@ -6,6 +6,12 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 
 @NgModule({
@@ -16,6 +22,14 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     NzCardModule,
     NzButtonModule,
     NzModalModule,
+    NzSelectModule,
+    FormsModule,
+    NzFormModule,
+    NzCheckboxModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NzDatePickerModule,
+    NzInputModule,
   ],
   declarations: [TaskComponent],
   exports: [TaskComponent]
