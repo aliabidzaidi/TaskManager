@@ -15,8 +15,9 @@
         <td>{{ data.title }}</td>
         <td>{{ data.dateAssigned }}</td>
         <td>
-          <a>Edit </a>
-          <a>Delete </a>
+          <!-- <button nz-button [nzType]="'primary'" (click)="showModal(data.id)"><span>Edit</span></button> -->
+          <a (click)=" editTask(data.id)">Edit </a>
+          <a nz-popconfirm nzPopconfirmTitle="Sure to delete?" (nzOnConfirm)="deleteTask(data.id)">Delete </a>
         </td>
       </tr>
     </tbody>
@@ -24,55 +25,62 @@
 </nz-card>
 
 <ng-template #extraTemplate>
-  <button nz-button [nzType]="'primary'" (click)="showModal()"><span>Show Modal</span></button>
+  <button nz-button [nzType]="'primary'" (click)="showModal()"><span>Add Task</span></button>
 </ng-template>
 
 
-<nz-modal [(nzVisible)]="isAddTask" nzTitle="Add Task" [nzFooter]="modalFooter">
+<nz-modal [(nzVisible)]="isModalOpen" nzTitle="Add Task" [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()">
   <ng-container *nzModalContent>
     <!-- Input form -->
     <!-- Drop down selecting Employee -->
+
+    <!-- <div nz-row [nzGutter]="[3, 1]">
+      <div nz-col [nzSpan]="7">Employee Name</div>
+      <div nz-col [nzSpan]="12">
+        <nz-select [(ngModel)]="selectedValue" nzShowSearch nzAllowClear nzPlaceHolder="Select an Employee">
+          <nz-option *ngFor="let e of employeeList" nzLabel="{{e.name}}" nzValue="{{e.id}}"></nz-option>
+        </nz-select>
+
+      </div>
+    </div> -->
     <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
-      
+
 
       <nz-form-item>
         <nz-form-label [nzSpan]="7" nzFor="employeeId" nzRequired>Employee Name</nz-form-label>
-        <nz-form-control [nzSpan]="12" nzErrorTip="Please select Employee">
-          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select an Employee" formControlName="employeeId">
+        <nz-form-control *ngIf="!isEdit" [nzSpan]="12" nzErrorTip="Please select Employee">
+          <nz-select formControlName="employeeId" nzShowSearch nzAllowClear nzPlaceHolder="Select an Employee">
             <nz-option *ngFor="let e of employeeList" nzLabel="{{e.name}}" nzValue="{{e.id}}"></nz-option>
           </nz-select>
         </nz-form-control>
+        <b *ngIf="isEdit">{{selectedValue}}</b>
       </nz-form-item>
 
 
       <nz-form-item>
-        <nz-form-label [nzSpan]="7">Task Title</nz-form-label>
+        <nz-form-label [nzSpan]="7" nzRequired>Task Title</nz-form-label>
         <nz-form-control [nzSpan]="12" nzErrorTip="Please write something here!">
           <!-- <textarea formControlName="title" nz-input rows="2" placeholder="write any thing"></textarea> -->
           <input id="title" type="text" nz-input formControlName="title" />
         </nz-form-control>
       </nz-form-item>
 
-
-
       <nz-form-item>
-        <nz-form-label [nzSpan]="7">Date Assigned</nz-form-label>
+        <nz-form-label [nzSpan]="7" nzRequired>Date Assigned</nz-form-label>
         <nz-form-control [nzSpan]="12" nzErrorTip="Please select date">
           <nz-date-picker nzShowTime formControlName="datePickerTime"></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
-
-      
-
     </form>
 
   </ng-container>
 
-  
+
   <ng-template #modalFooter>
-    <button nz-button nzType="default" (click)="handleCancel()">Custom Callback</button>
-    <button nz-button nzType="primary" (click)="submitForm()" [nzLoading]="isConfirmLoading">Custom Submit</button>
+    <button *ngIf="!isEdit" nz-button nzType="primary" (click)="submitForm()"
+      [nzLoading]="isConfirmLoading">Submit</button>
+    <button *ngIf="isEdit" nz-button nzType="primary" (click)="submitEdit()"
+      [nzLoading]="isConfirmLoading">Submit</button>
   </ng-template>
 
 </nz-modal>
-

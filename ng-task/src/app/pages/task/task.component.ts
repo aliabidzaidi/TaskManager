@@ -30,48 +30,51 @@ interface Task {
 })
 export class TaskComponent implements OnInit {
 
-  selectedValue = null;
-  taskList!: any[];
-  employeeList!: any[];
+  selectedValue = { label: '', value: '' };
+  taskList: any = [];
+  employeeList: any = [];
   taskCount = 0;
-  isAddTask = false;
+  isModalOpen = false;
   validateForm!: FormGroup;
   isConfirmLoading = false;
+  isEdit = false;
+  editedTask: any;
 
-  constructor(private taskService: TaskService, 
-              private fb: FormBuilder,
-              private message: NzMessageService) { }
+  constructor(private taskService: TaskService,
+    private fb: FormBuilder,
+    private message: NzMessageService) { }
 
   ngOnInit() {
-    
+
     this.validateForm = this.fb.group({
       title: [null, [Validators.required]],
       datePickerTime: [null, [Validators.required]],
-      employeeId: null
+      employeeId: [null, [Validators.required]]
     });
 
     this.getTaskList();
     this.getEmployeeList();
-
   }
 
   submitForm(): void {
     this.isConfirmLoading = true;
     // console.log(this.validateForm.value);
     const formValues = this.validateForm.value;
-    if(formValues.title && formValues.employeeId && formValues.datePickerTime){
+    if (formValues.title && this.selectedValue && formValues.datePickerTime) {
       console.log(formValues);
-      const req = {"title": formValues.title, "employee": {"id": formValues.employeeId}, 
-                  "dateAssigned": formValues.datePickerTime, "dateCompleted": formValues.datePickerTime
-                  }
+      const req = {
+        "title": formValues.title, "employee": { "id": this.selectedValue },
+        "dateAssigned": formValues.datePickerTime, "dateCompleted": formValues.datePickerTime
+      }
       this.taskService.addTask(req).subscribe(
-        (response)=>{
+        (response) => {
           console.log(response);
           this.message.success('Task Successfully added');
           this.validateForm.reset();
-          this.isAddTask = false;
+          this.isModalOpen = false;
+          this.getTaskList();
         },
-        (error)=>{
+        (error) => {
           console.log(error);
           this.message.error(error.message);
         }
@@ -81,26 +84,15 @@ export class TaskComponent implements OnInit {
   }
 
   showModal(): void {
-    this.isAddTask = true;
+    this.isModalOpen = true;
   }
 
-
-  // handleOk(): void {
-  //   this.isConfirmLoading = true;
-  //   setTimeout(() => {
-  //     this.isAddTask = false;
-  //     this.isConfirmLoading = false;
-  //   }, 1000);
-  // }
 
   handleCancel(): void {
     console.log('Button cancel clicked!');
-    this.isAddTask = false;
+    this.isModalOpen = false;
+    this.validateForm.reset();
   }
-
-  // submitForm(): void {
-  //   console.log(this.validateForm.value);
-  // }
 
 
   getTaskList() {
@@ -119,19 +111,67 @@ export class TaskComponent implements OnInit {
     );
   }
 
-  getTaskById(id: any) {
-
+  editTask(id: any) {
+    this.isEdit = true;
+    this.isModalOpen = true;
+    this.editedTask = this.taskList.filter((t: any) => t.id == id)[0];
+    // this.selectedValue = {label: this.editedTask.employee.name, value: this.editedTask.employee.id};
+    this.selectedValue = this.editedTask.employee.name;
+    // console.log(this.selectedValue.name);
+    this.validateForm.setValue({
+      'title': this.editedTask.title,
+      'datePickerTime': this.editedTask.dateAssigned,
+      'employeeId': { 'label': this.editedTask.employee.name, 'value': this.editedTask.employee.id }
+    });
+    console.log(this.validateForm.value);
   }
 
-  addTask() {
+  submitEdit() {
+    this.isConfirmLoading = true;
+    const formValues = this.validateForm.value;
+    if (formValues.title && this.selectedValue && formValues.datePickerTime) {
+      // console.log(formValues);
+      // const req = {"title": formValues.title, "employee": {"id": formValues.employeeId}, 
+      //             "dateAssigned": formValues.datePickerTime, "dateCompleted": formValues.datePickerTime
+      //             }
 
+      this.editedTask["dateAssigned"] = formValues.datePickerTime;
+      this.editedTask["title"] = formValues.title;
+
+      this.taskService.editTask(this.editedTask).subscribe(
+        (response) => {
+          console.log(response);
+          this.message.success('Task Successfully edited');
+          this.validateForm.reset();
+          this.isModalOpen = false;
+          this.getTaskList();
+        },
+        (error) => {
+          console.log(error);
+          this.message.error(error.message);
+        }
+      );
+
+      this.isEdit = false;
+      this.validateForm.reset();
+      this.editedTask = {};
+      this.isConfirmLoading = false;
+
+    }
   }
 
-  editTask() {
+  deleteTask(id: number) {
+    this.taskService.deleteTask(id).subscribe(
+      (response) => {
+        this.taskList = this.taskList.filter((t: any) => t["id"] != id);
+        this.message.success('Task Successfully Deleted');
+      },
+      (error) => {
+        console.log(error);
+        this.message.success('Task could not be Deleted, error');
 
-  }
-
-  deleteTask() {
+      },
+    );
 
   }
 
