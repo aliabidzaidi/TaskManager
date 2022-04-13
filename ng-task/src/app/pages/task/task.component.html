@@ -78,7 +78,7 @@
 
   <ng-template #modalFooter>
     <button *ngIf="!isEdit" nz-button nzType="primary" (click)="submitForm()"
-      [nzLoading]="isConfirmLoading">Submit</button>
+      [nzLoading]="isConfirmAddLoading">Submit</button>
     <button *ngIf="isEdit" nz-button nzType="primary" (click)="submitEdit()"
       [nzLoading]="isConfirmLoading">Submit</button>
   </ng-template>

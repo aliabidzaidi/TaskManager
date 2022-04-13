@@ -37,6 +37,7 @@ export class TaskComponent implements OnInit {
   isModalOpen = false;
   validateForm!: FormGroup;
   isConfirmLoading = false;
+  isConfirmAddLoading = false;
   isEdit = false;
   editedTask: any;
 
@@ -57,13 +58,13 @@ export class TaskComponent implements OnInit {
   }
 
   submitForm(): void {
-    this.isConfirmLoading = true;
+    this.isConfirmAddLoading = true;
     // console.log(this.validateForm.value);
     const formValues = this.validateForm.value;
-    if (formValues.title && this.selectedValue && formValues.datePickerTime) {
+    if (formValues.title && formValues.employeeId && formValues.datePickerTime) {
       console.log(formValues);
       const req = {
-        "title": formValues.title, "employee": { "id": this.selectedValue },
+        "title": formValues.title, "employee": { "id": formValues.employeeId },
         "dateAssigned": formValues.datePickerTime, "dateCompleted": formValues.datePickerTime
       }
       this.taskService.addTask(req).subscribe(
@@ -80,7 +81,7 @@ export class TaskComponent implements OnInit {
         }
       );
     }
-    this.isConfirmLoading = false;
+    this.isConfirmAddLoading = false;
   }
 
   showModal(): void {
